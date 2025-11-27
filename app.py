@@ -1,20 +1,29 @@
 from flask import Flask, render_template, request, redirect, session
 import mysql.connector
-from datetime import datetime, timedelta
+import os
 
 app = Flask(__name__)
 app.secret_key = "12345678"
 
-DB_CONFIG = {
-    "host": "192.168.1.150",
-    "user": "root",
-    "password": "1904",
-    "database": "Expense_App",
-    "auth_plugin": "mysql_native_password"
-}
-
+# ------------------- RENDER DATABASE CONFIG -------------------
 def get_conn():
-    return mysql.connector.connect(**DB_CONFIG)
+    db_url = os.getenv("postgresql://root:ZMDSeY9ukZIZolEWY3RHLVEeXmkU7YkA@dpg-d4j9hhvpm1nc73dtsap0-a/expenseaap")  # GET DB URL FROM RENDER
+
+    if not db_url:
+        raise Exception("DATABASE_URL not set in Render")
+
+    # db_url format: mysql://user:pass@host:port/dbname
+    import urllib.parse as urlparse
+    url = urlparse.urlparse(db_url)
+
+    return mysql.connector.connect(
+        host=url.hostname,
+        user=url.username,
+        password=url.password,
+        database=url.path[1:],
+        port=url.port
+    )
+# --------------------------------------------------------------
 
 # ===== REGISTER =====
 @app.route("/register", methods=["GET", "POST"])
@@ -45,6 +54,7 @@ def register():
 
     return render_template("register.html", message=msg)
 
+
 # ===== LOGIN =====
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -70,6 +80,7 @@ def login():
 
     return render_template("login.html", message=msg)
 
+
 # ===== DASHBOARD =====
 @app.route("/dashboard")
 def dashboard():
@@ -78,8 +89,7 @@ def dashboard():
 
     conn = get_conn()
     cur = conn.cursor()
-    
-    # IMPORTANT: fetch all fields in correct order
+
     cur.execute("""
         SELECT 
             username, date, task_assigned_by, work_assignment, assigned_to_person,
@@ -104,6 +114,7 @@ def dashboard():
         total_expense=total_expense,
         username=session["user"]
     )
+
 
 # ===== ADD TASK =====
 @app.route("/add", methods=["GET", "POST"])
@@ -132,7 +143,7 @@ def add_task():
         expense_purpose = ", ".join(tags) if tags else "none"
 
         other_purpose = request.form.get("other_purpose", "")
-        amount = request.form["amount"]  # auto total
+        amount = request.form["amount"]
 
         conn = get_conn()
         cur = conn.cursor()
@@ -142,8 +153,7 @@ def add_task():
                 username, date, task_assigned_by, work_assignment, assigned_to_person,
                 task_description, work_done_today, task_status, work_plan_next_day,
                 expense_purpose, other_purpose, amount
-            )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             session["user"], date, assigned_by, assignment, assigned_to,
             desc, done, status, next_day, expense_purpose, other_purpose, amount
@@ -153,15 +163,16 @@ def add_task():
         cur.close()
         conn.close()
 
-        return redirect("/dashboard")   # ⬅⬅⬅ Redirect after saving
+        return redirect("/dashboard")
 
     return render_template("add_task.html", message=msg)
 
-# ===== LOGOUT =====
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
