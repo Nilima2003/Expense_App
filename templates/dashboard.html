@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f2f2f2;
+            font-family: Arial;
+            margin: 0;
+        }
+
+        /* ANDROID NAVBAR */
+        .navbar {
+            background: #007bff;
+            padding: 15px;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .navbar a:hover {
+            background: #005fcc;
+        }
+
+        /* CONTAINER */
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        /* SUMMARY CARDS */
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .summary-card {
+            width: 48%;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* TASK CARD */
+        .task-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            border-left: 6px solid #007bff;
+        }
+
+        .task-card strong {
+            color: #333;
+        }
+
+        h3 {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <span><i class="material-icons">home</i> Expense App</span>
+
+    <div>
+        <a href="/dashboard"><i class="material-icons">dashboard</i></a>
+        <a href="/add"><i class="material-icons">add</i></a>
+        <a href="/logout" style="background:red;"><i class="material-icons">logout</i></a>
+    </div>
+</div>
+
+<div class="container">
+
+    <h2>Welcome, {{ username }}</h2>
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-box">
+        <div class="summary-card">
+            <h3>{{ total_tasks }}</h3>
+            <p>Total Tasks</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>₹{{ total_expense }}</h3>
+            <p>Total Expense</p>
+        </div>
+    </div>
+
+    <h3>Recent Tasks</h3>
+
+    {% if tasks %}
+        {% for t in tasks %}
+            <div class="task-card">
+                <strong>Date:</strong> {{ t[1] }} <br>
+                <strong>Task:</strong> {{ t[5] }} <br>
+                <strong>Work Done:</strong> {{ t[6] }} <br>
+                <strong>Status:</strong> {{ t[7] }} <br>
+                <strong>Expense:</strong> {{ t[9] }} <br>
+                <strong>Amount:</strong> ₹{{ t[11] }}   <!-- CORRECT AMOUNT -->
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No tasks found.</p>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
