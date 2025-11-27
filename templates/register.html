@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f2f2f2;
+            font-family: Arial;
+            margin: 0;
+        }
+        .container {
+            max-width: 450px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 17px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .msg { color: green; text-align:center; }
+        p { text-align:center; margin-top:10px; }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+        <h2><i class="material-icons">person_add</i> Register</h2>
+
+        {% if message %}
+            <p class="msg">{{ message }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="username" placeholder="Enter Username" required>
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="text" name="contact" placeholder="Enter Contact No" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+
+            <button>Register</button>
+        </form>
+
+        <p><a href="/">Back to Login</a></p>
+
+    </div>
+</div>
+
+</body>
+</html>
